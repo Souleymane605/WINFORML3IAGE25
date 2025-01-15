@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -67,11 +68,10 @@ namespace WINFORML3IAGE25
 
             //save data in list
             list.Add(personne);
-            MessageBox.Show("Données ajoutées ","Enregistrement",MessageBoxButtons.OK, MessageBoxIcon.Information);
+           MessageBox.Show("Données ajoutées ","Enregistrement",MessageBoxButtons.OK, MessageBoxIcon.Information);
 
             //Chargement du dategrid view
-            dataGridView1.DataSource = null;
-            dataGridView1.DataSource = list;
+            refresh();
 
             btnDelete.Enabled = true;
             btnUpdate.Enabled = true;
@@ -129,6 +129,79 @@ namespace WINFORML3IAGE25
 
                 cmbClasse.Text =personneselected.classe;
             }
+        }
+
+        private void btnDelete_Click(object sender, EventArgs e)
+        {
+            if(personneselected == null)
+            {
+                MessageBox.Show("Verifier que vous avez selectionner","Avertissement",MessageBoxButtons.OK);
+            }
+            else
+            {
+                DialogResult result = MessageBox.Show("Voulez vous confirmer la suppression", "Avertissement",MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+                if (result == DialogResult.Yes)
+                {
+                    list.Remove(personneselected);
+                    refresh();
+                    effacer();
+                }
+                
+            }
+            
+        }
+        public void refresh()
+        {
+            dataGridView1.DataSource = null;
+            dataGridView1.DataSource = list;
+        }
+
+        private void btnUpdate_Click(object sender, EventArgs e)
+        {
+            if (personneselected == null)
+            {
+                MessageBox.Show("Verifier que vous avez selectionner", "Avertissement", MessageBoxButtons.OK);
+            }
+            else
+            {
+                int pos = list.IndexOf(personneselected);
+                personneselected.tel = txtTel.Text;
+                personneselected.nom = txtNom.Text;
+                personneselected.prenom = txtPrenom.Text;
+
+                personneselected.sexe = (rbFemme.Checked) ? "Femme" : "Homme";
+
+                string tempocomp = "";
+                if (ckbJava.Checked)
+                {
+                    tempocomp += "JAVA ";
+                }
+                if (ckbPhp.Checked)
+                {
+                    tempocomp += "PHP ";
+                }
+                if (ckbCsharp.Checked)
+                {
+                    tempocomp += "C# ";
+                }
+                if (ckbCplusplus.Checked)
+                {
+                    tempocomp += "C++ ";
+                }
+                personneselected.competences = tempocomp;
+                personneselected.classe = cmbClasse.Text;
+
+                list[pos] = personneselected;
+                refresh();
+                effacer(); 
+
+            }
+        }
+
+        private void btnOpen_Click(object sender, EventArgs e)
+        {
+            Form2 form2 = new Form2();
+            form2.ShowDialog();
         }
     }
 }
